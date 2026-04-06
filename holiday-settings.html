@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Holiday Settings - Polar PJP</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #0055a4;
+      --primary-dark: #003d7a;
+      --primary-light: #e8f0fb;
+      --success: #28a745;
+      --danger: #dc3545;
+      --warning: #ffc107;
+      --info: #17a2b8;
+      --body-bg: #f4f6fb;
+      --card-bg: #fff;
+      --border: #dee2e6;
+      --text-1: #212529;
+      --text-2: #495057;
+      --text-3: #6c757d;
+      --radius: 8px;
+      --radius-sm: 5px;
+      --shadow: 0 2px 12px rgba(0,85,164,.10);
+      --shadow-lg: 0 8px 30px rgba(0,85,164,.18);
+    }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--body-bg); color: var(--text-1); font-size: 14px; min-height: 100vh; }
+
+    /* ── Topbar ── */
+    .topbar { background: var(--primary); color: #fff; padding: 0 28px; height: 58px; display: flex; align-items: center; gap: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.18); position: sticky; top: 0; z-index: 100; }
+    .topbar-brand { font-size: 18px; font-weight: 700; letter-spacing: -.3px; display: flex; align-items: center; gap: 10px; }
+    .topbar-brand .dot { width: 10px; height: 10px; background: #fff; border-radius: 50%; display: inline-block; }
+    .topbar-nav { display: flex; gap: 4px; margin-left: 28px; }
+    .topbar-nav a { color: rgba(255,255,255,.75); text-decoration: none; padding: 6px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; transition: all .15s; }
+    .topbar-nav a:hover { background: rgba(255,255,255,.15); color: #fff; }
+    .topbar-nav a.active { background: rgba(255,255,255,.2); color: #fff; }
+    .topbar-right { margin-left: auto; font-size: 13px; opacity: .85; }
+
+    /* ── Page layout ── */
+    .page { max-width: 1100px; margin: 0 auto; padding: 28px 24px; }
+    .page-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+    .page-head h1 { font-size: 20px; font-weight: 700; }
+    .page-head p { font-size: 13px; color: var(--text-3); margin-top: 4px; }
+    .breadcrumb { font-size: 12.5px; color: var(--text-3); margin-bottom: 6px; }
+    .breadcrumb span { color: var(--primary); }
+
+    /* ── Cards ── */
+    .card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 20px; }
+    .card-hd { padding: 16px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    .card-hd-left { display: flex; align-items: center; gap: 10px; font-size: 12.5px; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: .6px; }
+    .card-hd-left .hd-icon { font-size: 17px; }
+    .card-bd { padding: 22px; }
+    .card-hd-actions { display: flex; align-items: center; gap: 10px; }
+
+    /* ── Weekly day pills ── */
+    .meta-label { font-size: 13px; color: var(--text-2); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .mark-badge { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 5px; font-size: 11px; font-weight: 700; border: 1.5px solid var(--border); color: var(--text-2); background: #f8f9fa; }
+    .mark-badge.g { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+    .day-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+    .day-pill { padding: 8px 20px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; color: var(--text-2); background: #fff; cursor: pointer; transition: all .15s; font-family: inherit; user-select: none; }
+    .day-pill:hover:not(.selected) { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+    .day-pill.selected { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 3px 8px rgba(0,85,164,.25); }
+    .save-row { margin-top: 20px; display: flex; align-items: center; gap: 12px; }
+
+    /* ── National holidays ── */
+    .meta-desc { font-size: 13px; color: var(--text-2); margin-bottom: 18px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .meta-desc code { background: #f0f2f5; border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-size: 12px; color: var(--text-1); font-family: 'Consolas', monospace; }
+    .add-row { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .inp-date { padding: 9px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 13.5px; color: var(--text-1); outline: none; font-family: inherit; transition: border-color .15s, box-shadow .15s; width: 160px; flex-shrink: 0; }
+    .inp-date:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,85,164,.1); }
+    .inp-name { flex: 1; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 13.5px; color: var(--text-1); outline: none; font-family: inherit; transition: border-color .15s, box-shadow .15s; min-width: 220px; }
+    .inp-name:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,85,164,.1); }
+    .inp-name::placeholder { color: #adb5bd; }
+
+    /* ── Buttons ── */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all .15s; font-family: inherit; white-space: nowrap; }
+    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 3px 10px rgba(0,85,164,.3); }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .btn-outline { background: #fff; color: var(--primary); border: 1.5px solid var(--primary); }
+    .btn-outline:hover { background: var(--primary-light); }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-danger:hover { background: #b02a37; }
+    .btn-sm { padding: 5px 12px; font-size: 12px; }
+    .btn-link { background: none; border: none; color: var(--primary); font-size: 13px; font-weight: 600; cursor: pointer; padding: 8px 4px; font-family: inherit; text-decoration: underline; text-underline-offset: 2px; }
+    .btn-link:hover { color: var(--primary-dark); }
+
+    /* ── Holiday table ── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    thead th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .5px; background: #f8f9fa; border-bottom: 1.5px solid var(--border); white-space: nowrap; }
+    tbody tr { border-bottom: 1px solid #f0f2f5; transition: background .1s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f0f5ff; }
+    td { padding: 11px 14px; color: var(--text-2); vertical-align: middle; }
+    td.sl { color: #adb5bd; font-size: 12px; font-weight: 600; width: 42px; }
+    td.hdate { font-weight: 600; color: var(--primary); white-space: nowrap; width: 130px; }
+    td.hname { font-weight: 600; color: var(--text-1); }
+    .day-tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: #e8f0fb; color: var(--primary); margin-left: 8px; }
+    .empty-state { text-align: center; padding: 44px 20px; color: #adb5bd; }
+    .empty-state .ei { font-size: 40px; margin-bottom: 10px; }
+    .empty-state p { font-size: 13.5px; }
+    .icn-btn { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: none; border-radius: var(--radius-sm); cursor: pointer; font-size: 14px; transition: all .15s; }
+    .icn-btn.del  { background: #fde8ea; color: var(--danger); }
+    .icn-btn.del:hover { background: var(--danger); color: #fff; }
+
+    /* ── Summary badges ── */
+    .summary-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+    .sum-badge { background: var(--card-bg); border-radius: var(--radius); padding: 14px 20px; box-shadow: var(--shadow); border-left: 4px solid var(--primary); display: flex; align-items: center; gap: 12px; flex: 1; min-width: 160px; }
+    .sum-badge.green { border-left-color: var(--success); }
+    .sum-badge.orange { border-left-color: var(--warning); }
+    .sum-icon { font-size: 24px; }
+    .sum-label { font-size: 11.5px; color: var(--text-3); text-transform: uppercase; font-weight: 600; letter-spacing: .4px; }
+    .sum-value { font-size: 24px; font-weight: 700; color: var(--text-1); line-height: 1.1; }
+
+    /* ── Toast ── */
+    .toast { position: fixed; bottom: 22px; right: 22px; background: #212529; color: #fff; padding: 12px 18px; border-radius: var(--radius); font-size: 13px; font-weight: 500; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 8px; z-index: 9999; transform: translateY(70px); opacity: 0; transition: all .28s cubic-bezier(.34,1.56,.64,1); pointer-events: none; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { background: #1a6e3c; }
+    .toast.error   { background: #b02a37; }
+
+    /* ── Del confirm ── */
+    .del-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; z-index: 600; opacity: 0; pointer-events: none; transition: opacity .18s; }
+    .del-overlay.open { opacity: 1; pointer-events: all; }
+    .del-box { background: #fff; border-radius: var(--radius); padding: 32px 28px; max-width: 360px; width: 90%; text-align: center; box-shadow: var(--shadow-lg); }
+    .del-box .del-icon { font-size: 40px; margin-bottom: 12px; }
+    .del-box h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .del-box p { font-size: 13px; color: var(--text-3); margin-bottom: 22px; line-height: 1.6; }
+    .del-actions { display: flex; gap: 10px; justify-content: center; }
+
+    /* ── Hidden file input ── */
+    #csvFileInput { display: none; }
+  </style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="topbar-brand"><span class="dot"></span> Polar PJP</div>
+  <div class="topbar-nav">
+    <a href="#">Dashboard</a>
+    <a href="daily-planner.html">Daily Planner</a>
+    <a href="#">Task Report</a>
+    <a href="team-members.html">Team Members</a>
+    <a href="activity-settings.html">Activity Settings</a>
+    <a href="holiday-settings.html" class="active">Holiday Settings</a>
+  </div>
+  <div class="topbar-right">Admin &nbsp;|&nbsp; Super Admin</div>
+</nav>
+
+<div class="page">
+  <div class="breadcrumb">Home &rsaquo; Settings &rsaquo; <span>Holiday Settings</span></div>
+  <div class="page-head">
+    <div>
+      <h1>Holiday Settings</h1>
+      <p>Configure weekly off-days and government / national holidays used across all PJP plans.</p>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-row">
+    <div class="sum-badge">
+      <div class="sum-icon">&#128197;</div>
+      <div>
+        <div class="sum-label">Weekly Off Days</div>
+        <div class="sum-value" id="sumWeekly">0</div>
+      </div>
+    </div>
+    <div class="sum-badge green">
+      <div class="sum-icon">&#127963;</div>
+      <div>
+        <div class="sum-label">National Holidays</div>
+        <div class="sum-value" id="sumNational">0</div>
+      </div>
+    </div>
+    <div class="sum-badge orange">
+      <div class="sum-icon">&#128683;</div>
+      <div>
+        <div class="sum-label">Total Off Days (This Month)</div>
+        <div class="sum-value" id="sumThisMonth">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Weekly Holidays ── -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-hd-left">
+        <span class="hd-icon">&#128197;</span>
+        Weekly Holidays
+      </div>
+    </div>
+    <div class="card-bd">
+      <div class="meta-label">
+        Days marked as <span class="mark-badge">W</span> on the monthly PJP calendar
+      </div>
+      <div class="day-pills" id="dayPills">
+        <button class="day-pill" data-day="Mon" onclick="toggleDay('Mon')">Mon</button>
+        <button class="day-pill" data-day="Tue" onclick="toggleDay('Tue')">Tue</button>
+        <button class="day-pill" data-day="Wed" onclick="toggleDay('Wed')">Wed</button>
+        <button class="day-pill" data-day="Thu" onclick="toggleDay('Thu')">Thu</button>
+        <button class="day-pill selected" data-day="Fri" onclick="toggleDay('Fri')">Fri</button>
+        <button class="day-pill selected" data-day="Sat" onclick="toggleDay('Sat')">Sat</button>
+        <button class="day-pill" data-day="Sun" onclick="toggleDay('Sun')">Sun</button>
+      </div>
+      <div class="save-row">
+        <button class="btn btn-primary" onclick="saveWeeklyHolidays()">Save Weekly Holidays</button>
+        <span id="weeklyStatus" style="font-size:12.5px;color:var(--text-3)"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Government / National Holidays ── -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-hd-left">
+        <span class="hd-icon">&#127963;</span>
+        Government / National Holidays
+      </div>
+      <div class="card-hd-actions">
+        <button class="btn-link" onclick="downloadTemplate()">&#8595; Download Template</button>
+        <button class="btn btn-primary btn-sm" onclick="document.getElementById('csvFileInput').click()">&#8593; Import File</button>
+        <input type="file" id="csvFileInput" accept=".csv" onchange="importCSV(event)" />
+      </div>
+    </div>
+    <div class="card-bd">
+      <div class="meta-desc">
+        Days marked as <span class="mark-badge g">G</span>
+        &mdash; supports .csv with <code>date</code> and <code>name</code> columns
+      </div>
+      <div class="add-row">
+        <input type="date" id="hDate" class="inp-date" />
+        <input type="text" id="hName" class="inp-name" placeholder="Holiday name (e.g. Eid ul-Fitr)" onkeydown="if(event.key==='Enter')addHoliday()" />
+        <button class="btn btn-primary" onclick="addHoliday()">+ Add</button>
+      </div>
+      <div id="holidayListWrap">
+        <div class="empty-state" id="emptyState">
+          <div class="ei">&#127963;</div>
+          <p>No holidays added yet.</p>
+        </div>
+        <div class="table-wrap" id="tableWrap" style="display:none">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Holiday Name</th>
+                <th>Day</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="holidayTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete confirmation -->
+<div class="del-overlay" id="delOverlay">
+  <div class="del-box">
+    <div class="del-icon">&#128465;</div>
+    <h3>Remove Holiday?</h3>
+    <p id="delMsg">Are you sure?</p>
+    <div class="del-actions">
+      <button class="btn btn-outline" onclick="closeDelModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDel()">Yes, Remove</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="tIcon"></span><span id="tMsg"></span></div>
+
+<script>
+var DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+var DAY_NAMES = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+var DAY_FULL = {Mon:'Monday',Tue:'Tuesday',Wed:'Wednesday',Thu:'Thursday',Fri:'Friday',Sat:'Saturday',Sun:'Sunday'};
+var delTarget = null;
+
+/* ── State ── */
+var weeklyOff = loadWeeklyOff();
+var holidays  = loadHolidays();
+
+function loadWeeklyOff() {
+  try { var v = localStorage.getItem('pjp_weekly_off'); if(v) return JSON.parse(v); } catch(e){}
+  return ['Fri','Sat'];
+}
+function loadHolidays() {
+  try { var v = localStorage.getItem('pjp_national_holidays'); if(v) return JSON.parse(v); } catch(e){}
+  return [];
+}
+function saveWeeklyOff() { try { localStorage.setItem('pjp_weekly_off', JSON.stringify(weeklyOff)); } catch(e){} }
+function saveHolidaysStore() { try { localStorage.setItem('pjp_national_holidays', JSON.stringify(holidays)); } catch(e){} }
+
+/* ── Weekly pills ── */
+function toggleDay(day) {
+  var idx = weeklyOff.indexOf(day);
+  if(idx >= 0) { weeklyOff.splice(idx,1); }
+  else { weeklyOff.push(day); }
+  refreshPills();
+}
+function refreshPills() {
+  document.querySelectorAll('.day-pill').forEach(function(p){
+    var day = p.getAttribute('data-day');
+    p.classList.toggle('selected', weeklyOff.indexOf(day) >= 0);
+  });
+  updateSummary();
+}
+function saveWeeklyHolidays() {
+  saveWeeklyOff();
+  document.getElementById('weeklyStatus').textContent = 'Saved \u2713';
+  setTimeout(function(){ document.getElementById('weeklyStatus').textContent=''; }, 2500);
+  toast('Weekly holidays saved', 'success');
+  updateSummary();
+}
+
+/* ── Add holiday ── */
+function addHoliday() {
+  var dateVal = document.getElementById('hDate').value;
+  var nameVal = document.getElementById('hName').value.trim();
+  if(!dateVal) { shakeEl('hDate'); toast('Please select a date','error'); return; }
+  if(!nameVal) { shakeEl('hName'); toast('Please enter a holiday name','error'); return; }
+  var dup = holidays.find(function(h){ return h.date===dateVal; });
+  if(dup) { toast('"'+dup.name+'" already set for this date','error'); return; }
+  holidays.push({ date: dateVal, name: nameVal });
+  holidays.sort(function(a,b){ return a.date.localeCompare(b.date); });
+  saveHolidaysStore();
+  document.getElementById('hDate').value = '';
+  document.getElementById('hName').value = '';
+  renderHolidays();
+  toast('"'+nameVal+'" added', 'success');
+}
+
+/* ── Render table ── */
+function renderHolidays() {
+  var tbody = document.getElementById('holidayTbody');
+  tbody.innerHTML = '';
+  if(!holidays.length) {
+    document.getElementById('emptyState').style.display = '';
+    document.getElementById('tableWrap').style.display = 'none';
+    updateSummary(); return;
+  }
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('tableWrap').style.display = '';
+  holidays.forEach(function(h, i){
+    var d = new Date(h.date + 'T00:00:00');
+    var weekDay = DAYS[d.getDay()===0?6:d.getDay()-1]; // 0=Sun in JS
+    var jsDay = d.getDay(); // 0=Sun,1=Mon,...6=Sat
+    var dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    var dayLabel = dayNames[jsDay];
+    var isWeekly = weeklyOff.indexOf(dayLabel) >= 0;
+    var displayDate = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td class="sl">'+(i+1)+'</td>'
+      +'<td class="hdate">'+displayDate+'</td>'
+      +'<td class="hname">'+escapeHtml(h.name)+(isWeekly?'<span class="day-tag">Weekly Off</span>':'')+'</td>'
+      +'<td><span style="font-size:12px;font-weight:600;color:var(--text-2)">'+DAY_FULL[dayLabel]||dayLabel+'</span></td>'
+      +'<td><button class="icn-btn del" onclick="openDel('+i+')" title="Remove">&#128465;</button></td>';
+    tbody.appendChild(tr);
+  });
+  updateSummary();
+}
+
+/* ── Delete ── */
+function openDel(idx) {
+  delTarget = idx;
+  var h = holidays[idx];
+  document.getElementById('delMsg').textContent = 'Remove "' + (h ? h.name : 'this holiday') + '" from the holiday list?';
+  document.getElementById('delOverlay').classList.add('open');
+}
+function closeDelModal() { document.getElementById('delOverlay').classList.remove('open'); delTarget = null; }
+function confirmDel() {
+  if(delTarget === null) return;
+  var h = holidays[delTarget];
+  holidays.splice(delTarget, 1);
+  saveHolidaysStore();
+  closeDelModal();
+  renderHolidays();
+  toast('"'+(h&&h.name)+'" removed', '');
+}
+
+/* ── CSV Import ── */
+function importCSV(e) {
+  var file = e.target.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var lines = ev.target.result.split(/\r?\n/);
+    if(!lines.length) { toast('Empty file','error'); return; }
+    var header = lines[0].split(',').map(function(c){ return c.trim().toLowerCase().replace(/"/g,''); });
+    var dateIdx = header.indexOf('date');
+    var nameIdx = header.indexOf('name');
+    if(dateIdx<0 || nameIdx<0) { toast('CSV must have "date" and "name" columns','error'); return; }
+    var added = 0, skipped = 0;
+    for(var i=1; i<lines.length; i++) {
+      var cells = lines[i].split(',').map(function(c){ return c.trim().replace(/^"|"$/g,''); });
+      if(!cells[dateIdx] || !cells[nameIdx]) continue;
+      var rawDate = cells[dateIdx];
+      // Accept dd/mm/yyyy or yyyy-mm-dd
+      var isoDate = parseToISO(rawDate);
+      if(!isoDate) { skipped++; continue; }
+      var dup = holidays.find(function(h){ return h.date===isoDate; });
+      if(dup) { skipped++; continue; }
+      holidays.push({ date: isoDate, name: cells[nameIdx] });
+      added++;
+    }
+    holidays.sort(function(a,b){ return a.date.localeCompare(b.date); });
+    saveHolidaysStore();
+    renderHolidays();
+    toast(added+' holiday(s) imported'+(skipped?' ('+skipped+' skipped)':''), 'success');
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function parseToISO(raw) {
+  // yyyy-mm-dd
+  if(/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+  // dd/mm/yyyy
+  var m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(m) return m[3]+'-'+pad(m[2])+'-'+pad(m[1]);
+  // dd-mm-yyyy
+  m = raw.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+  if(m) return m[3]+'-'+pad(m[2])+'-'+pad(m[1]);
+  return null;
+}
+function pad(n){ return String(n).padStart(2,'0'); }
+
+/* ── Download Template ── */
+function downloadTemplate() {
+  var csv = 'date,name\n26/03/2026,Independence Day\n14/04/2026,Bengali New Year\n01/05/2026,May Day\n';
+  var blob = new Blob([csv], {type:'text/csv'});
+  var link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'holiday-template.csv';
+  link.click();
+  URL.revokeObjectURL(link.href);
+  toast('Template downloaded', 'success');
+}
+
+/* ── Summary ── */
+function updateSummary() {
+  document.getElementById('sumWeekly').textContent = weeklyOff.length;
+  document.getElementById('sumNational').textContent = holidays.length;
+  // Count off days this month (weekly + national)
+  var now = new Date();
+  var year = now.getFullYear(), month = now.getMonth();
+  var daysInMonth = new Date(year, month+1, 0).getDate();
+  var offSet = new Set();
+  var dayAbbr = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  for(var d=1; d<=daysInMonth; d++) {
+    var dt = new Date(year, month, d);
+    if(weeklyOff.indexOf(dayAbbr[dt.getDay()]) >= 0) offSet.add(year+'-'+pad(month+1)+'-'+pad(d));
+  }
+  holidays.forEach(function(h){
+    var hDate = new Date(h.date+'T00:00:00');
+    if(hDate.getFullYear()===year && hDate.getMonth()===month) offSet.add(h.date);
+  });
+  document.getElementById('sumThisMonth').textContent = offSet.size;
+}
+
+/* ── Helpers ── */
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function shakeEl(id) {
+  var el = document.getElementById(id);
+  el.style.borderColor = 'var(--danger)';
+  el.style.boxShadow = '0 0 0 3px rgba(220,53,69,.15)';
+  el.focus();
+  setTimeout(function(){ el.style.borderColor=''; el.style.boxShadow=''; }, 1800);
+}
+var tTimer;
+function toast(msg, type) {
+  type = type || '';
+  var el = document.getElementById('toast');
+  document.getElementById('tMsg').textContent = msg;
+  document.getElementById('tIcon').textContent = type==='success'?'\u2714 ':type==='error'?'\u2716 ':'\u2139 ';
+  el.className = 'toast '+type;
+  void el.offsetWidth; el.classList.add('show');
+  clearTimeout(tTimer);
+  tTimer = setTimeout(function(){ el.classList.remove('show'); }, 3000);
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeDelModal(); });
+
+/* ── Init ── */
+refreshPills();
+renderHolidays();
+</script>
+</body>
+</html>

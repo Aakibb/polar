@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Activity Settings - Polar PJP</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #0055a4;
+      --primary-dark: #003d7a;
+      --primary-light: #e8f0fb;
+      --success: #28a745;
+      --danger: #dc3545;
+      --warning: #ffc107;
+      --info: #17a2b8;
+      --body-bg: #f4f6fb;
+      --card-bg: #fff;
+      --border: #dee2e6;
+      --text-1: #212529;
+      --text-2: #495057;
+      --text-3: #6c757d;
+      --radius: 8px;
+      --radius-sm: 5px;
+      --shadow: 0 2px 12px rgba(0,85,164,.10);
+      --shadow-lg: 0 8px 30px rgba(0,85,164,.18);
+    }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--body-bg); color: var(--text-1); font-size: 14px; min-height: 100vh; }
+    .topbar { background: var(--primary); color: #fff; padding: 0 28px; height: 58px; display: flex; align-items: center; gap: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.18); position: sticky; top: 0; z-index: 100; }
+    .topbar-brand { font-size: 18px; font-weight: 700; letter-spacing: -.3px; display: flex; align-items: center; gap: 10px; }
+    .topbar-brand .dot { width: 10px; height: 10px; background: #fff; border-radius: 50%; display: inline-block; }
+    .topbar-nav { display: flex; gap: 4px; margin-left: 28px; }
+    .topbar-nav a { color: rgba(255,255,255,.75); text-decoration: none; padding: 6px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; transition: all .15s; }
+    .topbar-nav a:hover { background: rgba(255,255,255,.15); color: #fff; }
+    .topbar-nav a.active { background: rgba(255,255,255,.2); color: #fff; }
+    .topbar-right { margin-left: auto; font-size: 13px; opacity: .85; }
+    .page { max-width: 1200px; margin: 0 auto; padding: 28px 24px; }
+    .page-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+    .page-head h1 { font-size: 20px; font-weight: 700; }
+    .page-head p { font-size: 13px; color: var(--text-3); margin-top: 4px; }
+    .breadcrumb { font-size: 12.5px; color: var(--text-3); margin-bottom: 6px; }
+    .breadcrumb span { color: var(--primary); }
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: var(--card-bg); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); border-top: 3px solid var(--primary); display: flex; align-items: center; gap: 14px; }
+    .stat-card.green  { border-top-color: var(--success); }
+    .stat-card.orange { border-top-color: var(--warning); }
+    .stat-card.teal   { border-top-color: var(--info); }
+    .stat-icon { font-size: 28px; flex-shrink: 0; }
+    .stat-label { font-size: 11.5px; color: var(--text-3); text-transform: uppercase; font-weight: 600; letter-spacing: .5px; }
+    .stat-value { font-size: 28px; font-weight: 700; color: var(--text-1); line-height: 1.1; }
+    .card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .toolbar { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .search-wrap { display: flex; align-items: center; gap: 8px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 7px 12px; background: var(--body-bg); flex: 1; max-width: 280px; transition: border-color .15s; }
+    .search-wrap:focus-within { border-color: var(--primary); background: #fff; }
+    .search-wrap input { border: none; background: transparent; font-size: 13px; outline: none; color: var(--text-2); width: 100%; font-family: inherit; }
+    .search-wrap input::placeholder { color: #adb5bd; }
+    select.sf { padding: 7px 28px 7px 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; color: var(--text-2); background: var(--body-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%236c757d' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 8px center; -webkit-appearance: none; appearance: none; outline: none; cursor: pointer; font-family: inherit; }
+    select.sf:focus { border-color: var(--primary); background-color: #fff; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all .15s; font-family: inherit; white-space: nowrap; }
+    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 3px 10px rgba(0,85,164,.3); }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .btn-outline { background: #fff; color: var(--primary); border: 1.5px solid var(--primary); }
+    .btn-outline:hover { background: var(--primary-light); }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-danger:hover { background: #b02a37; }
+    .btn-sm { padding: 5px 12px; font-size: 12px; }
+    .tabs { display: flex; border-bottom: 2px solid var(--border); background: #fafbfd; padding: 0 18px; gap: 2px; }
+    .tab-btn { padding: 11px 20px; font-size: 13px; font-weight: 600; color: var(--text-3); border: none; background: transparent; cursor: pointer; border-bottom: 2.5px solid transparent; margin-bottom: -2px; display: flex; align-items: center; gap: 8px; transition: all .15s; font-family: inherit; }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .tab-btn:hover:not(.active) { color: var(--primary); }
+    .tab-count { font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 20px; }
+    .tab-btn.active .tab-count { background: var(--primary); color: #fff; }
+    .tab-btn:not(.active) .tab-count { background: #e9ecef; color: var(--text-3); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    thead th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .5px; background: #f8f9fa; border-bottom: 1.5px solid var(--border); white-space: nowrap; }
+    tbody tr { border-bottom: 1px solid #f0f2f5; transition: background .1s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f0f5ff; }
+    td { padding: 12px 14px; color: var(--text-2); vertical-align: middle; }
+    td.sl { color: #adb5bd; font-size: 12px; font-weight: 600; width: 40px; }
+    td.name { font-weight: 600; color: var(--text-1); }
+    .badge { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 20px; font-size: 11.5px; font-weight: 600; }
+    .badge-asm { background: #dbeafe; color: #1d4ed8; }
+    .badge-so  { background: #fef9c3; color: #92400e; }
+    .roles-wrap { display: flex; gap: 5px; flex-wrap: wrap; }
+    .toggle-wrap { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; width: fit-content; }
+    .toggle { position: relative; width: 40px; height: 22px; }
+    .toggle input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: #ced4da; border-radius: 11px; transition: background .2s; }
+    .toggle-slider::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; background: #fff; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,.2); transition: transform .22s cubic-bezier(.34,1.56,.64,1); }
+    .toggle input:checked + .toggle-slider { background: var(--success); }
+    .toggle input:checked + .toggle-slider::after { transform: translateX(18px); }
+    .toggle-lbl { font-size: 12px; font-weight: 600; }
+    .toggle-lbl.on  { color: var(--success); }
+    .toggle-lbl.off { color: #adb5bd; }
+    .action-wrap { display: flex; gap: 6px; }
+    .icn-btn { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: none; border-radius: var(--radius-sm); cursor: pointer; font-size: 14px; transition: all .15s; }
+    .icn-btn.edit { background: #e8f0fb; color: var(--primary); }
+    .icn-btn.edit:hover { background: var(--primary); color: #fff; }
+    .icn-btn.del  { background: #fde8ea; color: var(--danger); }
+    .icn-btn.del:hover { background: var(--danger); color: #fff; }
+    .empty-state { text-align: center; padding: 54px 20px; color: #adb5bd; }
+    .empty-state .ei { font-size: 44px; margin-bottom: 10px; }
+    .empty-state p { font-size: 13.5px; }
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 500; opacity: 0; pointer-events: none; transition: opacity .2s; }
+    .overlay.open { opacity: 1; pointer-events: all; }
+    .modal { background: #fff; border-radius: var(--radius); width: 100%; max-width: 500px; box-shadow: var(--shadow-lg); transform: scale(.94) translateY(-10px); transition: transform .22s cubic-bezier(.34,1.3,.64,1); max-height: 90vh; overflow-y: auto; }
+    .overlay.open .modal { transform: scale(1) translateY(0); }
+    .modal-hd { padding: 18px 22px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .modal-hd h2 { font-size: 15px; font-weight: 700; }
+    .close-x { width: 28px; height: 28px; border: none; background: #f0f2f5; border-radius: 5px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-3); transition: all .15s; }
+    .close-x:hover { background: #fde8ea; color: var(--danger); }
+    .modal-bd { padding: 20px 22px; }
+    .modal-ft { padding: 14px 22px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+    .fg { margin-bottom: 16px; }
+    .fg label { display: block; font-size: 12.5px; font-weight: 600; color: var(--text-2); margin-bottom: 6px; }
+    .fg label .req { color: var(--danger); }
+    .inp { width: 100%; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 13.5px; color: var(--text-1); outline: none; font-family: inherit; transition: border-color .15s, box-shadow .15s; }
+    .inp:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,85,164,.1); }
+    .inp::placeholder { color: #adb5bd; }
+    .hint { font-size: 11.5px; color: #adb5bd; margin-top: 4px; }
+    .seg-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .seg { padding: 6px 16px; border: 1.5px solid var(--border); border-radius: 20px; font-size: 12.5px; cursor: pointer; transition: all .15s; user-select: none; background: #fff; color: var(--text-2); }
+    .seg:hover { border-color: var(--primary); color: var(--primary); }
+    .seg.sel-daily   { border-color: var(--primary); background: var(--primary-light); color: var(--primary); font-weight: 700; }
+    .seg.sel-weekly  { border-color: var(--info); background: #e8f7fa; color: #0e6b79; font-weight: 700; }
+    .seg.sel-monthly { border-color: var(--warning); background: #fff8e1; color: #856404; font-weight: 700; }
+    .seg.sel-active  { border-color: var(--success); background: #d4edda; color: #155724; font-weight: 700; }
+    .seg.sel-inactive{ border-color: var(--danger); background: #fde8ea; color: var(--danger); font-weight: 700; }
+    .chk-group { display: flex; gap: 10px; flex-wrap: wrap; }
+    .chk-item { display: flex; align-items: center; gap: 7px; padding: 8px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; transition: all .15s; }
+    .chk-item input { width: 15px; height: 15px; accent-color: var(--primary); cursor: pointer; }
+    .chk-item:has(input:checked) { border-color: var(--primary); background: var(--primary-light); color: var(--primary); font-weight: 600; }
+    .del-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; z-index: 600; opacity: 0; pointer-events: none; transition: opacity .18s; }
+    .del-overlay.open { opacity: 1; pointer-events: all; }
+    .del-box { background: #fff; border-radius: var(--radius); padding: 32px 28px; max-width: 360px; width: 90%; text-align: center; box-shadow: var(--shadow-lg); }
+    .del-box .del-icon { font-size: 40px; margin-bottom: 14px; }
+    .del-box h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .del-box p { font-size: 13px; color: var(--text-3); margin-bottom: 24px; line-height: 1.6; }
+    .del-actions { display: flex; gap: 10px; justify-content: center; }
+    .toast { position: fixed; bottom: 22px; right: 22px; background: #212529; color: #fff; padding: 12px 18px; border-radius: var(--radius); font-size: 13px; font-weight: 500; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 8px; z-index: 9999; transform: translateY(70px); opacity: 0; transition: all .28s cubic-bezier(.34,1.56,.64,1); pointer-events: none; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { background: #1a6e3c; }
+    .toast.error   { background: #b02a37; }
+    .seg.sel-wt { border-color: #0987a0; background: #e0f7fa; color: #06607a; font-weight: 700; }
+    .seg .wt-del { margin-left:6px; font-size:11px; color:#aaa; cursor:pointer; line-height:1; vertical-align:middle; }
+    .seg .wt-del:hover { color:#dc3545; }
+    .seg .wt-ren { margin-left:4px; font-size:11px; color:#aaa; cursor:pointer; line-height:1; vertical-align:middle; }
+    .seg .wt-ren:hover { color:#0987a0; }
+    .wt-pill { display: inline-block; padding: 3px 9px; border-radius: 10px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .wt-field { background: #d4edda; color: #155724; }
+    .wt-admin { background: #ede9fb; color: #6b4de0; }
+    .wt-other { background: #e9ecef; color: #495057; }
+    .wt-add-row { display: flex; gap: 8px; margin-top: 8px; align-items: center; }
+    .wt-add-row .inp { flex: 1; padding: 6px 10px; font-size: 12.5px; }
+    /* Ref. Module */
+    .rm-pill { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:10px; font-size:11px; font-weight:600; background:#fff8e1; color:#7c5c00; border:1px solid #f0c040; white-space:nowrap; }
+    .rm-pill .rm-icon { font-size:12px; }
+    .rm-select-row { display:flex; gap:8px; align-items:center; margin-top:4px; }
+    .rm-select-row select.inp { flex:1; }
+    .rm-new-row { display:flex; gap:8px; margin-top:6px; align-items:center; }
+    .rm-new-row .inp { flex:1; font-size:12.5px; }
+    .rm-hint { font-size:11px; color:var(--text-3); margin-top:4px; }
+    .req-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .req-toggle { display: flex; align-items: center; gap: 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 9px 14px; cursor: pointer; flex: 1; min-width: 160px; transition: all .15s; }
+    .req-toggle.on { border-color: var(--primary); background: var(--primary-light); }
+    .req-toggle input[type=checkbox] { width: 15px; height: 15px; accent-color: var(--primary); cursor: pointer; }
+    .req-toggle .rt-icon { font-size: 16px; }
+    .req-toggle .rt-text { display: flex; flex-direction: column; }
+    .req-toggle .rt-label { font-size: 13px; font-weight: 600; color: var(--text-1); }
+    .req-toggle .rt-sub { font-size: 11px; color: var(--text-3); }
+    .rt-pill { display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+    .rt-pill.yes { background: #d4edda; color: #155724; }
+    .rt-pill.no  { background: #e9ecef; color: #6c757d; }
+  </style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="topbar-brand"><span class="dot"></span> Polar PJP</div>
+  <div class="topbar-nav">
+    <a href="#">Dashboard</a>
+    <a href="daily-planner.html">Daily Planner</a>
+    <a href="#">Task Report</a>
+    <a href="team-members.html">Team Members</a>
+    <a href="activity-settings.html" class="active">Activity Settings</a>
+    <a href="holiday-settings.html">Holiday Settings</a>
+  </div>
+  <div class="topbar-right">Admin &nbsp;|&nbsp; Super Admin</div>
+</nav>
+
+<div class="page">
+  <div class="breadcrumb">Home &rsaquo; Settings &rsaquo; <span>Activity Settings</span></div>
+  <div class="page-head">
+    <div>
+      <h1>Activity Type Settings</h1>
+      <p>Manage the pre-defined activity catalogue used in the monthly PJP planner.</p>
+    </div>
+    <button class="btn btn-primary" onclick="openAddModal()">+ Add Activity</button>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-icon">&#128203;</div><div><div class="stat-label">Daily</div><div class="stat-value" id="cntDaily">0</div></div></div>
+    <div class="stat-card teal"><div class="stat-icon">&#128197;</div><div><div class="stat-label">Weekly</div><div class="stat-value" id="cntWeekly">0</div></div></div>
+    <div class="stat-card orange"><div class="stat-icon">&#128467;</div><div><div class="stat-label">Monthly</div><div class="stat-value" id="cntMonthly">0</div></div></div>
+    <div class="stat-card green"><div class="stat-icon">&#9989;</div><div><div class="stat-label">Total</div><div class="stat-value" id="cntTotal">0</div></div></div>
+  </div>
+
+  <div class="card">
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#adb5bd" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="Search activities..." oninput="renderAll()"/>
+      </div>
+      <select class="sf" id="roleFilter" onchange="renderAll()">
+        <option value="">All Roles</option>
+        <option value="ASM">ASM</option>
+        <option value="SO/ASE">SO / ASE</option>
+        <option value="Both">Both Roles</option>
+      </select>
+      <select class="sf" id="statusFilter" onchange="renderAll()">
+        <option value="">All Status</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+      <select class="sf" id="wtFilter" onchange="renderAll()">
+        <option value="">All Work Types</option>
+      </select>
+      <div style="margin-left:auto">
+        <button class="btn btn-outline btn-sm" onclick="exportCSV()">&#8595; Export CSV</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-daily"   onclick="switchTab('daily')">Daily   <span class="tab-count" id="cnt-daily">0</span></button>
+      <button class="tab-btn"        id="tab-weekly"  onclick="switchTab('weekly')">Weekly  <span class="tab-count" id="cnt-weekly">0</span></button>
+      <button class="tab-btn"        id="tab-monthly" onclick="switchTab('monthly')">Monthly <span class="tab-count" id="cnt-monthly">0</span></button>
+    </div>
+
+    <div id="panel-daily"   class="tab-panel active"><div class="table-wrap"><table id="tbl-daily"  ><thead><tr><th>#</th><th>Activity Name</th><th>Applicable Roles</th><th>Work Type</th><th>Ref. Module</th><th>On Completion</th><th>Status</th><th>Actions</th></tr></thead><tbody></tbody></table></div></div>
+    <div id="panel-weekly"  class="tab-panel"       ><div class="table-wrap"><table id="tbl-weekly" ><thead><tr><th>#</th><th>Activity Name</th><th>Applicable Roles</th><th>Work Type</th><th>Ref. Module</th><th>On Completion</th><th>Status</th><th>Actions</th></tr></thead><tbody></tbody></table></div></div>
+    <div id="panel-monthly" class="tab-panel"       ><div class="table-wrap"><table id="tbl-monthly"><thead><tr><th>#</th><th>Activity Name</th><th>Applicable Roles</th><th>Work Type</th><th>Ref. Module</th><th>On Completion</th><th>Status</th><th>Actions</th></tr></thead><tbody></tbody></table></div></div>
+  </div>
+</div>
+
+<div class="overlay" id="modalOverlay" onclick="bgClick(event)">
+  <div class="modal">
+    <div class="modal-hd">
+      <h2 id="modalTitle">Add New Activity</h2>
+      <button class="close-x" onclick="closeModal()">&#215;</button>
+    </div>
+    <div class="modal-bd">
+      <input type="hidden" id="editId"/>
+      <div class="fg">
+        <label>Activity Name <span class="req">*</span></label>
+        <input type="text" class="inp" id="fName" placeholder="e.g. Sales Review &amp; Action Plan"/>
+        <div class="hint">Use a clear descriptive name &mdash; it will appear on the PJP form.</div>
+      </div>
+      <div class="fg">
+        <label>Category <span class="req">*</span></label>
+        <div class="seg-row" id="catGroup">
+          <span class="seg" data-cat="daily"   onclick="pickCat('daily')">Daily</span>
+          <span class="seg" data-cat="weekly"  onclick="pickCat('weekly')">Weekly</span>
+          <span class="seg" data-cat="monthly" onclick="pickCat('monthly')">Monthly</span>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Applicable Roles <span class="req">*</span></label>
+        <div class="chk-group">
+          <label class="chk-item"><input type="checkbox" id="chkAsm"/> ASM</label>
+          <label class="chk-item"><input type="checkbox" id="chkSo"/> SO / ASE</label>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Work Type <span class="req">*</span></label>
+        <div class="seg-row" id="wtGroup"></div>
+        <div class="wt-add-row">
+          <input type="text" class="inp" id="wtNewInput" placeholder="Add new type (e.g. Training, Meeting)"/>
+          <button type="button" class="btn btn-outline btn-sm" onclick="addWorkType()">+ Add Type</button>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Ref. Module <span style="font-weight:400;color:#adb5bd">(optional)</span></label>
+        <div class="rm-select-row">
+          <select class="inp" id="fRefModule"><option value="">— None —</option></select>
+        </div>
+        <div class="rm-new-row">
+          <input type="text" class="inp" id="rmNewInput" placeholder="Add new module (e.g. Survey, Allowance)"/>
+          <button type="button" class="btn btn-outline btn-sm" onclick="addRefModule()">+ Add</button>
+        </div>
+        <div class="rm-hint">&#128161; Link this task to an app module (e.g. Check-in, TA DA, Survey)</div>
+      </div>
+      <div class="fg">
+        <label>On Completion</label>
+        <div class="req-row">
+          <label class="req-toggle" id="rtRemarks" onclick="toggleReqField('remarks')">
+            <input type="checkbox" id="chkRemarks" onclick="return false"/>
+            <span class="rt-icon">&#128221;</span>
+            <span class="rt-text">
+              <span class="rt-label">Remarks</span>
+              <span class="rt-sub">Require text remarks</span>
+            </span>
+          </label>
+          <label class="req-toggle" id="rtAttach" onclick="toggleReqField('attach')">
+            <input type="checkbox" id="chkAttach" onclick="return false"/>
+            <span class="rt-icon">&#128206;</span>
+            <span class="rt-text">
+              <span class="rt-label">Attachment</span>
+              <span class="rt-sub">Require file/photo</span>
+            </span>
+          </label>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Status</label>
+        <div class="seg-row" id="statusGroup">
+          <span class="seg sel-active"  data-st="active"   onclick="pickStatus('active')">Active</span>
+          <span class="seg"             data-st="inactive" onclick="pickStatus('inactive')">Inactive</span>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Description <span style="font-weight:400;color:#adb5bd">(optional)</span></label>
+        <textarea class="inp" id="fDesc" rows="3" placeholder="Brief description..." style="resize:vertical"></textarea>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveActivity()"><span id="saveLbl">Save Activity</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="del-overlay" id="delOverlay">
+  <div class="del-box">
+    <div class="del-icon">&#128465;</div>
+    <h3>Delete Activity?</h3>
+    <p id="delMsg">Are you sure?</p>
+    <div class="del-actions">
+      <button class="btn btn-outline" onclick="closeDelModal()">Cancel</button>
+      <button class="btn btn-danger"  onclick="confirmDel()">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="tIcon"></span><span id="tMsg"></span></div>
+
+<script>
+var nid=100, activeTab='daily', selCat='daily', selSt='active', selWt='', selRemarks=false, selAttach=false, delTarget=null;
+var BUILTIN_ACTS=[
+  {id:nid++,name:'Team PJP Monitoring',cat:'daily',roles:['ASM'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Sales Review & Action Plan',cat:'daily',roles:['ASM'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'DB Primary Sales & Collection',cat:'daily',roles:['ASM'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'DB Credit Monitoring',cat:'daily',roles:['ASM'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Dealer Point Visit',cat:'daily',roles:['ASM'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Non Performer SO/ASE Visit',cat:'daily',roles:['ASM'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'New Market Hunting',cat:'daily',roles:['ASM'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Search Potential Distributor',cat:'daily',roles:['ASM'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Competitors Market Information Collection',cat:'daily',roles:['ASM'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Competitors Outlet Visit',cat:'daily',roles:['ASM'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Market & Route Supervision',cat:'daily',roles:['ASM'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Competitors Dealer Point Visit',cat:'daily',roles:['ASM'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Day End Meeting With MDR',cat:'daily',roles:['ASM','SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Non Productive DF Visit',cat:'daily',roles:['ASM','SO/ASE'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Non Productive MDR Visit',cat:'daily',roles:['ASM','SO/ASE'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Priyojon Outlet Visit',cat:'daily',roles:['ASM','SO/ASE'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Acquired Competitor Outlet',cat:'daily',roles:['ASM','SO/ASE'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Kick off Meeting With MDR',cat:'daily',roles:['SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'On the Job Training of MDR',cat:'daily',roles:['SO/ASE'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'DB Secondary Sales & Delivery',cat:'daily',roles:['SO/ASE'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'New Outlet Coverage',cat:'daily',roles:['SO/ASE'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'CDF & ODF Outlet Visit',cat:'daily',roles:['SO/ASE'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'MDR & Route Visit',cat:'daily',roles:['SO/ASE'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'DF Products Display (GDP)',cat:'daily',roles:['SO/ASE'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'PDF Inject & Withdraw',cat:'daily',roles:['SO/ASE'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Shop Branding & POSM Activity',cat:'daily',roles:['SO/ASE'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'NEW SKU Launching Activity',cat:'daily',roles:['SO/ASE'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Target Vs Achievement Report',cat:'weekly',roles:['ASM'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Weekly Report',cat:'weekly',roles:['ASM'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'ABP/JBP Discussion',cat:'weekly',roles:['ASM'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'GTM Analysis',cat:'weekly',roles:['ASM'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Sales Data Analysis (SPA)',cat:'weekly',roles:['ASM','SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'DF Sales Analysis (PDF, CDF & ODF)',cat:'weekly',roles:['ASM','SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'MDR Productivity Analysis',cat:'weekly',roles:['ASM','SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Leave',cat:'weekly',roles:['ASM','SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Competitors Market Information Collection',cat:'weekly',roles:['SO/ASE'],st:'active',desc:'',workType:'Field Work',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'FDMS & SPA DF Data Update',cat:'weekly',roles:['SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'SPA Outlet Master Data Update',cat:'weekly',roles:['SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'MDR Selection & Week MDR Action Plan',cat:'weekly',roles:['SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'DB Wise SKU Stock & Lifting Analysis',cat:'weekly',roles:['SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Other Task',cat:'weekly',roles:['SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Regional Sales Meeting',cat:'monthly',roles:['ASM','SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Distributor Meeting',cat:'monthly',roles:['ASM','SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'National Sales Meeting',cat:'monthly',roles:['ASM','SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'MDR Meeting',cat:'monthly',roles:['ASM','SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Training',cat:'monthly',roles:['ASM','SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Facetime Meeting',cat:'monthly',roles:['ASM','SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Monthly TA DA Bill',cat:'monthly',roles:['ASM','SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'SKU Demand Planning',cat:'monthly',roles:['ASM','SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Other Task',cat:'monthly',roles:['ASM'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Month Closing Activity',cat:'monthly',roles:['ASM'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Monthly Target Setup',cat:'monthly',roles:['ASM'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:"DB's PL/ROI Report Making/Analysis",cat:'monthly',roles:['ASM'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Priyojon & Incentive Bill',cat:'monthly',roles:['ASM'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Monthly Task Planning',cat:'monthly',roles:['ASM'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'MDR Attendance Submission',cat:'monthly',roles:['ASM'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Month Sales Closing',cat:'monthly',roles:['SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'MDR Target Setup',cat:'monthly',roles:['SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:"DB's PL Report Making",cat:'monthly',roles:['SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Priyojon Bill Report',cat:'monthly',roles:['SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false},
+  {id:nid++,name:'Task Planning (PJP)',cat:'monthly',roles:['SO/ASE'],st:'active',desc:'',workType:'Admin',reqRemarks:false,reqAttach:false}
+];
+function saveActs(){try{localStorage.setItem('pjp_activities',JSON.stringify(acts));}catch(e){}}
+function loadActs(){
+  try{
+    var v=localStorage.getItem('pjp_activities');
+    if(v){
+      var parsed=JSON.parse(v);
+      if(parsed&&parsed.length){
+        /* Build lookup map from builtins: name+cat → workType/reqFlags */
+        var builtinMap={};
+        BUILTIN_ACTS.forEach(function(b){ builtinMap[b.name+'|'+b.cat]=b; });
+        /* Migrate: fill missing workType/reqRemarks/reqAttach from builtin defaults */
+        var patched=false;
+        parsed.forEach(function(a){
+          var key=a.name+'|'+a.cat;
+          if(!a.workType && builtinMap[key]){ a.workType=builtinMap[key].workType; patched=true; }
+          if(a.reqRemarks===undefined){ a.reqRemarks=builtinMap[key]?builtinMap[key].reqRemarks:false; patched=true; }
+          if(a.reqAttach===undefined){ a.reqAttach=builtinMap[key]?builtinMap[key].reqAttach:false; patched=true; }
+          if(a.refModule===undefined){ a.refModule=''; patched=true; }
+        });
+        acts=parsed;
+        var maxId=parsed.reduce(function(m,a){return a.id>m?a.id:m;},99);
+        nid=maxId+1;
+        if(patched) saveActs();
+        return;
+      }
+    }
+  }catch(e){}
+  /* First visit — seed from builtins */
+  acts=BUILTIN_ACTS.slice();
+  nid=acts.reduce(function(m,a){return a.id>m?a.id:m;},99)+1;
+  saveActs();
+}
+var acts=[];
+loadActs();
+
+function getWorkTypes(){
+  var stored=localStorage.getItem('pjp_work_types');
+  return stored?JSON.parse(stored):['Field Work','Admin'];
+}
+function saveWorkTypes(types){localStorage.setItem('pjp_work_types',JSON.stringify(types));}
+
+/* ── Ref. Module storage & UI ── */
+var DEFAULT_REF_MODULES=['Check-in','Daily TA DA','Allowance','Survey','PJP','Report','Meeting','Training'];
+function getRefModules(){
+  var s=localStorage.getItem('pjp_ref_modules');
+  return s?JSON.parse(s):DEFAULT_REF_MODULES.slice();
+}
+function saveRefModules(m){localStorage.setItem('pjp_ref_modules',JSON.stringify(m));}
+function populateRmSelect(selected){
+  var sel=document.getElementById('fRefModule');
+  sel.innerHTML='<option value="">\u2014 None \u2014</option>';
+  getRefModules().forEach(function(m){
+    var o=document.createElement('option');
+    o.value=m; o.textContent=m;
+    if(m===selected) o.selected=true;
+    sel.appendChild(o);
+  });
+}
+function addRefModule(){
+  var val=(document.getElementById('rmNewInput').value||'').trim();
+  if(!val){toast('Enter a module name','error');return;}
+  var mods=getRefModules();
+  if(mods.map(function(m){return m.toLowerCase();}).indexOf(val.toLowerCase())>=0){
+    toast('"'+val+'" already exists','error');return;
+  }
+  mods.push(val);
+  saveRefModules(mods);
+  document.getElementById('rmNewInput').value='';
+  populateRmSelect(val);
+  toast('"'+val+'" added as a module','success');
+}
+function getRmPill(rm){
+  if(!rm) return '<span style="color:#ccc;font-size:12px;">—</span>';
+  return '<span class="rm-pill"><span class="rm-icon">&#128279;</span>'+rm.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</span>';
+}
+function getWtClass(wt){
+  if(!wt) return 'wt-other';
+  var low=wt.toLowerCase();
+  if(low==='field work') return 'wt-field';
+  if(low==='admin') return 'wt-admin';
+  return 'wt-other';
+}
+function getWtPill(wt){
+  if(!wt) return '<span class="wt-pill wt-other" style="opacity:.4">\u2014</span>';
+  return '<span class="wt-pill '+getWtClass(wt)+'">'+wt+'</span>';
+}
+function renderWtPills(sel){
+  selWt=sel||'';
+  var types=getWorkTypes();
+  var container=document.getElementById('wtGroup');
+  container.innerHTML=types.map(function(t){
+    var active=t===selWt?' sel-wt':'';
+    var icon=t==='Field Work'?'\uD83C\uDFC3 ':t==='Admin'?'\uD83D\uDD8A ':'';
+    var esc=t.replace(/'/g,"\\'").replace(/"/g,'&quot;');
+    return '<span class="seg'+active+'" onclick="pickWt(\''+esc+'\')" title="Click to select">'
+      +icon+t
+      +'<span class="wt-ren" onclick="event.stopPropagation();renameWorkType(\''+esc+'\')" title="Rename">&#9998;</span>'
+      +'<span class="wt-del" onclick="event.stopPropagation();deleteWorkType(\''+esc+'\')" title="Delete">&times;</span>'
+      +'</span>';
+  }).join('');
+}
+function pickWt(wt){selWt=wt;renderWtPills(wt);}
+function deleteWorkType(wt){
+  var inUse=acts.some(function(a){return a.workType===wt;});
+  if(inUse){
+    toast('"'+wt+'" is used by one or more activities. Reassign them first.','error');
+    return;
+  }
+  if(!confirm('Delete work type "'+wt+'"?')) return;
+  var types=getWorkTypes().filter(function(t){return t!==wt;});
+  saveWorkTypes(types);
+  if(selWt===wt) selWt='';
+  renderWtPills(selWt);
+  populateWtFilter();
+  toast('"'+wt+'" deleted','success');
+}
+function renameWorkType(oldName){
+  var newName=prompt('Rename "'+oldName+'" to:',oldName);
+  if(!newName) return;
+  newName=newName.trim();
+  if(!newName){toast('Name cannot be empty','error');return;}
+  var types=getWorkTypes();
+  if(types.indexOf(oldName)<0){toast('Type not found','error');return;}
+  if(newName!==oldName && types.map(function(t){return t.toLowerCase();}).indexOf(newName.toLowerCase())>=0){
+    toast('"'+newName+'" already exists','error');return;
+  }
+  /* Rename in work types list */
+  types=types.map(function(t){return t===oldName?newName:t;});
+  saveWorkTypes(types);
+  /* Update all activities that used the old name */
+  var changed=false;
+  acts.forEach(function(a){if(a.workType===oldName){a.workType=newName;changed=true;}});
+  if(changed) saveActs();
+  if(selWt===oldName) selWt=newName;
+  renderWtPills(selWt);
+  populateWtFilter();
+  if(changed) renderAll();
+  toast('"'+oldName+'" renamed to "'+newName+'"','success');
+}
+function toggleReqField(field){
+  if(field==='remarks'){
+    selRemarks=!selRemarks;
+    document.getElementById('chkRemarks').checked=selRemarks;
+    document.getElementById('rtRemarks').classList.toggle('on',selRemarks);
+  } else {
+    selAttach=!selAttach;
+    document.getElementById('chkAttach').checked=selAttach;
+    document.getElementById('rtAttach').classList.toggle('on',selAttach);
+  }
+}
+function setReqFields(remarks,attach){
+  selRemarks=!!remarks; selAttach=!!attach;
+  document.getElementById('chkRemarks').checked=selRemarks;
+  document.getElementById('chkAttach').checked=selAttach;
+  document.getElementById('rtRemarks').classList.toggle('on',selRemarks);
+  document.getElementById('rtAttach').classList.toggle('on',selAttach);
+}
+function getCompletionPills(a){
+  var r=a.reqRemarks?'<span class="rt-pill yes">✏️ Remarks</span>':'<span class="rt-pill no">✏️ Optional</span>';
+  var t=a.reqAttach?'<span class="rt-pill yes">📎 Attach</span>':'<span class="rt-pill no">📎 Optional</span>';
+  return '<div style="display:flex;gap:4px;flex-wrap:wrap;">'+r+t+'</div>';
+}
+function addWorkType(){
+  var val=document.getElementById('wtNewInput').value.trim();
+  if(!val){toast('Type a name for the new work type','error');return;}
+  var types=getWorkTypes();
+  if(types.map(function(t){return t.toLowerCase();}).indexOf(val.toLowerCase())>=0){
+    toast('"'+val+'" already exists','error');return;
+  }
+  types.push(val);
+  saveWorkTypes(types);
+  document.getElementById('wtNewInput').value='';
+  renderWtPills(val);
+  populateWtFilter();
+  toast('"'+val+'" added as a work type','success');
+}
+function populateWtFilter(){
+  var sel=document.getElementById('wtFilter');
+  var cur=sel.value;
+  sel.innerHTML='<option value="">All Work Types</option>';
+  getWorkTypes().forEach(function(t){
+    var o=document.createElement('option');
+    o.value=t;o.textContent=t;
+    if(t===cur)o.selected=true;
+    sel.appendChild(o);
+  });
+}
+function renderAll(){
+  var q=document.getElementById('searchInput').value.trim().toLowerCase();
+  var roleF=document.getElementById('roleFilter').value;
+  var statusF=document.getElementById('statusFilter').value;
+  var wtF=document.getElementById('wtFilter').value;
+  ['daily','weekly','monthly'].forEach(function(cat){
+    var rows=acts.filter(function(a){
+      if(a.cat!==cat) return false;
+      if(q && a.name.toLowerCase().indexOf(q)<0) return false;
+      if(roleF==='Both' && a.roles.length<2) return false;
+      if(roleF==='ASM' && a.roles.indexOf('ASM')<0) return false;
+      if(roleF==='SO/ASE' && a.roles.indexOf('SO/ASE')<0) return false;
+      if(statusF && a.st!==statusF) return false;
+      if(wtF && a.workType!==wtF) return false;
+      return true;
+    });
+    var tbody=document.querySelector('#tbl-'+cat+' tbody');
+    tbody.innerHTML='';
+    if(!rows.length){
+      tbody.innerHTML='<tr><td colspan="8"><div class="empty-state"><div class="ei">&#128202;</div><p>No activities match your filters.</p></div></td></tr>';
+    } else {
+      rows.forEach(function(a,i){
+        var rb=a.roles.map(function(r){return r==='ASM'?'<span class="badge badge-asm">ASM</span>':'<span class="badge badge-so">SO/ASE</span>';}).join('');
+        var on=a.st==='active';
+        var tr=document.createElement('tr');
+        tr.innerHTML='<td class="sl">'+(i+1)+'</td>'
+          +'<td class="name">'+a.name+'</td>'
+          +'<td><div class="roles-wrap">'+rb+'</div></td>'
+          +'<td>'+getWtPill(a.workType)+'</td>'
+          +'<td>'+getRmPill(a.refModule||'')+'</td>'
+          +'<td>'+getCompletionPills(a)+'</td>'
+          +'<td><label class="toggle-wrap" onclick="toggleSt('+a.id+')">'
+          +'<div class="toggle"><input type="checkbox"'+(on?' checked':'')+' readonly onclick="return false"/>'
+          +'<div class="toggle-slider"></div></div>'
+          +'<span class="toggle-lbl '+(on?'on':'off')+'">'+(on?'Active':'Inactive')+'</span>'
+          +'</label></td>'
+          +'<td><div class="action-wrap">'
+          +'<button class="icn-btn edit" onclick="openEdit('+a.id+')" title="Edit">&#9998;</button>'
+          +'<button class="icn-btn del" onclick="openDel('+a.id+')" title="Delete">&#128465;</button>'
+          +'</div></td>';
+        tbody.appendChild(tr);
+      });
+    }
+    document.getElementById('cnt-'+cat).textContent=acts.filter(function(a){return a.cat===cat;}).length;
+  });
+  document.getElementById('cntDaily').textContent=acts.filter(function(a){return a.cat==='daily';}).length;
+  document.getElementById('cntWeekly').textContent=acts.filter(function(a){return a.cat==='weekly';}).length;
+  document.getElementById('cntMonthly').textContent=acts.filter(function(a){return a.cat==='monthly';}).length;
+  document.getElementById('cntTotal').textContent=acts.length;
+}
+
+function toggleSt(id){
+  var a=acts.find(function(x){return x.id===id;});
+  if(!a) return;
+  a.st=a.st==='active'?'inactive':'active';
+  saveActs();
+  renderAll();
+  toast('"'+a.name+'" '+(a.st==='active'?'activated':'deactivated'),a.st==='active'?'success':'');
+}
+function switchTab(cat){
+  activeTab=cat;
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('tab-'+cat).classList.add('active');
+  document.getElementById('panel-'+cat).classList.add('active');
+}
+function openAddModal(){
+  document.getElementById('modalTitle').textContent='Add New Activity';
+  document.getElementById('saveLbl').textContent='Save Activity';
+  document.getElementById('editId').value='';
+  document.getElementById('fName').value='';
+  document.getElementById('fDesc').value='';
+  document.getElementById('chkAsm').checked=false;
+  document.getElementById('chkSo').checked=false;
+  selCat=activeTab; selSt='active'; selWt='';
+  refreshCatPills(); refreshStPills(); renderWtPills('');
+  populateRmSelect('');
+  setReqFields(false,false);
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(function(){document.getElementById('fName').focus();},80);
+}
+function openEdit(id){
+  var a=acts.find(function(x){return x.id===id;}); if(!a) return;
+  document.getElementById('modalTitle').textContent='Edit Activity';
+  document.getElementById('saveLbl').textContent='Update Activity';
+  document.getElementById('editId').value=id;
+  document.getElementById('fName').value=a.name;
+  document.getElementById('fDesc').value=a.desc||'';
+  document.getElementById('chkAsm').checked=a.roles.indexOf('ASM')>=0;
+  document.getElementById('chkSo').checked=a.roles.indexOf('SO/ASE')>=0;
+  selCat=a.cat; selSt=a.st; selWt=a.workType||'';
+  refreshCatPills(); refreshStPills(); renderWtPills(selWt);
+  populateRmSelect(a.refModule||'');
+  setReqFields(a.reqRemarks,a.reqAttach);
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(function(){document.getElementById('fName').focus();},80);
+}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
+function bgClick(e){if(e.target===document.getElementById('modalOverlay'))closeModal();}
+function pickCat(cat){selCat=cat;refreshCatPills();}
+function refreshCatPills(){
+  document.querySelectorAll('#catGroup .seg').forEach(function(p){
+    p.classList.remove('sel-daily','sel-weekly','sel-monthly');
+    if(p.dataset.cat===selCat) p.classList.add('sel-'+selCat);
+  });
+}
+function pickStatus(st){selSt=st;refreshStPills();}
+function refreshStPills(){
+  document.querySelectorAll('#statusGroup .seg').forEach(function(p){
+    p.classList.remove('sel-active','sel-inactive');
+    if(p.dataset.st===selSt) p.classList.add('sel-'+selSt);
+  });
+}
+function saveActivity(){
+  var name=document.getElementById('fName').value.trim();
+  var desc=document.getElementById('fDesc').value.trim();
+  var asmOn=document.getElementById('chkAsm').checked;
+  var soOn=document.getElementById('chkSo').checked;
+  if(!name){shakeInp('fName');toast('Activity name is required','error');return;}
+  if(!selCat){toast('Please select a category','error');return;}
+  if(!asmOn&&!soOn){toast('Please select at least one role','error');return;}
+  if(!selWt){toast('Please select a work type','error');return;}
+  var roles=[].concat(asmOn?['ASM']:[]).concat(soOn?['SO/ASE']:[]);
+  var refModule=document.getElementById('fRefModule').value||'';
+  var eid=document.getElementById('editId').value;
+  if(eid){
+    var a=acts.find(function(x){return x.id===parseInt(eid);});
+    if(a){a.name=name;a.cat=selCat;a.roles=roles;a.st=selSt;a.desc=desc;a.workType=selWt;a.reqRemarks=selRemarks;a.reqAttach=selAttach;a.refModule=refModule;}
+    toast('"'+name+'" updated','success');
+  } else {
+    acts.push({id:nid++,name:name,cat:selCat,roles:roles,st:selSt,desc:desc,workType:selWt,reqRemarks:selRemarks,reqAttach:selAttach,refModule:refModule});
+    toast('"'+name+'" added','success');
+  }
+  saveActs();
+  closeModal();switchTab(selCat);renderAll();
+}
+function shakeInp(id){
+  var el=document.getElementById(id);
+  el.style.borderColor='var(--danger)';
+  el.style.boxShadow='0 0 0 3px rgba(220,53,69,.15)';
+  el.focus();
+  setTimeout(function(){el.style.borderColor='';el.style.boxShadow='';},1800);
+}
+function openDel(id){
+  var a=acts.find(function(x){return x.id===id;});
+  delTarget=id;
+  document.getElementById('delMsg').textContent='Are you sure you want to delete "'+(a?a.name:'this activity')+'"? It will be removed from all future PJP plans.';
+  document.getElementById('delOverlay').classList.add('open');
+}
+function closeDelModal(){document.getElementById('delOverlay').classList.remove('open');delTarget=null;}
+function confirmDel(){
+  var a=acts.find(function(x){return x.id===delTarget;});
+  acts=acts.filter(function(x){return x.id!==delTarget;});
+  saveActs();
+  closeDelModal();renderAll();
+  toast('"'+(a&&a.name)+'" deleted','');
+}
+function exportCSV(){
+  var rows=[['ID','Name','Category','Roles','Status','Description']];
+  acts.forEach(function(a){rows.push([a.id,'"'+a.name+'"',a.cat,a.roles.join('|'),a.st,'"'+a.desc+'"']);});
+  var blob=new Blob([rows.map(function(r){return r.join(',');}).join('\n')],{type:'text/csv'});
+  var link=document.createElement('a');
+  link.href=URL.createObjectURL(blob);link.download='polar-pjp-activities.csv';link.click();
+  URL.revokeObjectURL(link.href);
+  toast('CSV exported','success');
+}
+var tTimer;
+function toast(msg,type){
+  type=type||'';
+  var el=document.getElementById('toast');
+  document.getElementById('tMsg').textContent=msg;
+  document.getElementById('tIcon').textContent=type==='success'?'\u2714 ':type==='error'?'\u2716 ':'\u2139 ';
+  el.className='toast '+type;
+  void el.offsetWidth;el.classList.add('show');
+  clearTimeout(tTimer);
+  tTimer=setTimeout(function(){el.classList.remove('show');},3000);
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeModal();closeDelModal();}});
+populateWtFilter();
+renderAll();
+</script>
+</body>
+</html>

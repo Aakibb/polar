@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team Members - Polar PJP</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary:       #0055a4;
+      --primary-dark:  #003d7a;
+      --primary-light: #e8f0fb;
+      --purple:        #6b4de0;
+      --purple-dark:   #5438c0;
+      --purple-light:  #ede9fb;
+      --purple-dim:    #c9c1f0;
+      --success: #28a745;
+      --danger:  #dc3545;
+      --warning: #ffc107;
+      --body-bg: #f4f6fb;
+      --card-bg: #fff;
+      --border:  #dee2e6;
+      --text-1:  #212529;
+      --text-2:  #495057;
+      --text-3:  #6c757d;
+      --radius:  8px;
+      --radius-sm: 5px;
+      --shadow:  0 2px 12px rgba(0,85,164,.10);
+      --shadow-lg: 0 8px 30px rgba(0,85,164,.18);
+    }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--body-bg); color: var(--text-1); font-size: 14px; min-height: 100vh; }
+
+    /* Topbar */
+    .topbar { background: var(--primary); color: #fff; padding: 0 28px; height: 58px; display: flex; align-items: center; gap: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.18); position: sticky; top: 0; z-index: 100; }
+    .topbar-brand { font-size: 18px; font-weight: 700; letter-spacing: -.3px; display: flex; align-items: center; gap: 10px; }
+    .topbar-brand .dot { width: 10px; height: 10px; background: #fff; border-radius: 50%; display: inline-block; }
+    .topbar-nav { display: flex; gap: 4px; margin-left: 28px; }
+    .topbar-nav a { color: rgba(255,255,255,.75); text-decoration: none; padding: 6px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; transition: all .15s; }
+    .topbar-nav a:hover { background: rgba(255,255,255,.15); color: #fff; }
+    .topbar-nav a.active { background: rgba(255,255,255,.2); color: #fff; }
+    .topbar-right { margin-left: auto; font-size: 13px; opacity: .85; }
+
+    /* Page layout */
+    .page { max-width: 1200px; margin: 0 auto; padding: 28px 24px; }
+    .breadcrumb { font-size: 12.5px; color: var(--text-3); margin-bottom: 6px; }
+    .breadcrumb span { color: var(--primary); }
+    .page-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+    .page-head h1 { font-size: 20px; font-weight: 700; }
+    .page-head p  { font-size: 13px; color: var(--text-3); margin-top: 4px; }
+
+    /* Stats */
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: var(--card-bg); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); border-top: 3px solid var(--primary); display: flex; align-items: center; gap: 14px; }
+    .stat-card.green  { border-top-color: var(--success); }
+    .stat-card.purple { border-top-color: var(--purple); }
+    .stat-card.orange { border-top-color: var(--warning); }
+    .stat-icon { font-size: 28px; flex-shrink: 0; }
+    .stat-label { font-size: 11.5px; color: var(--text-3); text-transform: uppercase; font-weight: 600; letter-spacing: .5px; }
+    .stat-value { font-size: 28px; font-weight: 700; color: var(--text-1); line-height: 1.1; }
+
+    /* Toolbar */
+    .card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .toolbar { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .search-wrap { display: flex; align-items: center; gap: 8px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 7px 12px; background: var(--body-bg); flex: 1; max-width: 280px; transition: border-color .15s; }
+    .search-wrap:focus-within { border-color: var(--primary); background: #fff; }
+    .search-wrap input { border: none; background: transparent; font-size: 13px; outline: none; color: var(--text-2); width: 100%; font-family: inherit; }
+    .search-wrap input::placeholder { color: #adb5bd; }
+    select.sf { padding: 7px 28px 7px 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; color: var(--text-2); background: var(--body-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%236c757d' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 8px center; -webkit-appearance: none; appearance: none; outline: none; cursor: pointer; font-family: inherit; }
+    select.sf:focus { border-color: var(--primary); background-color: #fff; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all .15s; font-family: inherit; white-space: nowrap; }
+    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 3px 10px rgba(0,85,164,.3); }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .btn-danger  { background: var(--danger); color: #fff; }
+    .btn-danger:hover { background: #9b1c27; }
+    .btn-ghost  { background: transparent; color: var(--text-2); border: 1.5px solid var(--border); }
+    .btn-ghost:hover { background: var(--body-bg); }
+    .btn-sm { padding: 5px 12px; font-size: 12px; }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: #f8f9fc; }
+    thead th { text-align: left; padding: 11px 16px; font-size: 11.5px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-3); font-weight: 700; border-bottom: 1.5px solid var(--border); white-space: nowrap; }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .12s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #fafbff; }
+    td { padding: 13px 16px; }
+    .td-actions { display: flex; gap: 8px; align-items: center; }
+
+    /* Avatar */
+    .avatar { width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .member-cell { display: flex; align-items: center; gap: 10px; }
+    .member-name { font-weight: 600; font-size: 13.5px; color: var(--text-1); }
+    .member-id   { font-size: 11.5px; color: var(--text-3); margin-top: 1px; }
+
+    /* Badges */
+    .badge { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+    .badge-asm  { background: #dbeafe; color: #1d4ed8; }
+    .badge-so   { background: #fef9c3; color: #92400e; }
+    .badge-ase  { background: #f3e8ff; color: #7e22ce; }
+    .badge-active   { background: #d1f0da; color: #155724; }
+    .badge-inactive { background: #f8d7da; color: #721c24; }
+
+    /* Territory pill */
+    .terr-pill { font-size: 12px; color: var(--primary); background: var(--primary-light); padding: 2px 10px; border-radius: 20px; font-weight: 600; display: inline-block; }
+
+    /* Empty */
+    .tbl-empty { text-align: center; padding: 40px; color: #adb5bd; font-size: 13px; }
+
+    /* Modal */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 500; opacity: 0; pointer-events: none; transition: opacity .2s; }
+    .overlay.open { opacity: 1; pointer-events: all; }
+    .modal { background: #fff; border-radius: var(--radius); width: 100%; max-width: 500px; box-shadow: var(--shadow-lg); transform: scale(.94) translateY(-10px); transition: transform .22s cubic-bezier(.34,1.3,.64,1); max-height: 90vh; overflow-y: auto; }
+    .overlay.open .modal { transform: scale(1) translateY(0); }
+    .modal-hd { padding: 16px 20px 13px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .modal-hd h2 { font-size: 15px; font-weight: 700; }
+    .modal-bd { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+    .modal-ft { padding: 13px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group label { font-size: 12px; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: .4px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    input.fi, select.fi { padding: 8px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; color: var(--text-1); background: #fff; outline: none; font-family: inherit; transition: border-color .15s; width: 100%; }
+    input.fi:focus, select.fi:focus { border-color: var(--primary); }
+    select.fi { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%236c757d' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; -webkit-appearance: none; appearance: none; padding-right: 28px; }
+    .close-x { width: 28px; height: 28px; border: none; background: #f0f2f5; border-radius: 5px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-3); transition: all .15s; }
+    .close-x:hover { background: #fde8ea; color: var(--danger); }
+
+    /* Confirm modal */
+    .confirm-msg { padding: 20px 20px 4px; text-align: center; }
+    .confirm-msg .warn-icon { font-size: 40px; display: block; margin-bottom: 10px; }
+    .confirm-msg h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .confirm-msg p  { font-size: 13px; color: var(--text-3); }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 20px; right: 20px; background: #1a1a2e; color: #fff; padding: 11px 16px; border-radius: var(--radius); font-size: 13px; font-weight: 500; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 8px; z-index: 9999; transform: translateY(70px); opacity: 0; transition: all .28s cubic-bezier(.34,1.56,.64,1); pointer-events: none; }
+    .toast.show  { transform: translateY(0); opacity: 1; }
+    .toast.success { background: #1a6e3c; }
+    .toast.error   { background: #b02a37; }
+  </style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="topbar-brand"><span class="dot"></span> Polar PJP</div>
+  <div class="topbar-nav">
+    <a href="#">Dashboard</a>
+    <a href="daily-planner.html">Daily Planner</a>
+    <a href="#">Task Report</a>
+    <a href="team-members.html" class="active">Team Members</a>
+    <a href="activity-settings.html">Activity Settings</a>
+    <a href="holiday-settings.html">Holiday Settings</a>
+  </div>
+  <div class="topbar-right">Admin &nbsp;|&nbsp; Super Admin</div>
+</nav>
+
+<div class="page">
+  <div class="breadcrumb">Home &rsaquo; <span>Team Members</span></div>
+  <div class="page-head">
+    <div>
+      <h1>Team Members</h1>
+      <p>Manage your field team — SO and ASE members under your territory.</p>
+    </div>
+    <button class="btn btn-primary" onclick="openAddModal()">&#43; Add Member</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card">
+      <span class="stat-icon">&#128101;</span>
+      <div><div class="stat-label">Total Members</div><div class="stat-value" id="statTotal">0</div></div>
+    </div>
+    <div class="stat-card green">
+      <span class="stat-icon">&#9989;</span>
+      <div><div class="stat-label">Active</div><div class="stat-value" id="statActive">0</div></div>
+    </div>
+    <div class="stat-card purple">
+      <span class="stat-icon">&#127970;</span>
+      <div><div class="stat-label">SO</div><div class="stat-value" id="statSO">0</div></div>
+    </div>
+    <div class="stat-card orange">
+      <span class="stat-icon">&#127968;</span>
+      <div><div class="stat-label">ASE</div><div class="stat-value" id="statASE">0</div></div>
+    </div>
+  </div>
+
+  <!-- Table card -->
+  <div class="card">
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="#adb5bd" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by name, ID or territory..." oninput="renderTable()" />
+      </div>
+      <select class="sf" id="filterRole" onchange="renderTable()">
+        <option value="">All Roles</option>
+        <option value="SO">SO</option>
+        <option value="ASE">ASE</option>
+      </select>
+      <select class="sf" id="filterStatus" onchange="renderTable()">
+        <option value="">All Status</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+    </div>
+    <table id="membersTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Member</th>
+          <th>EMP ID</th>
+          <th>Role</th>
+          <th>Territory</th>
+          <th>Phone</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tblBody"></tbody>
+    </table>
+    <div id="tblEmpty" class="tbl-empty" style="display:none;">No members match.</div>
+  </div>
+</div>
+
+<!-- Add / Edit Modal -->
+<div class="overlay" id="memberOverlay" onclick="bgClick(event)">
+  <div class="modal">
+    <div class="modal-hd">
+      <h2 id="modalTitle">Add Team Member</h2>
+      <button class="close-x" onclick="closeModal()">&#215;</button>
+    </div>
+    <div class="modal-bd">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input class="fi" id="fName" type="text" placeholder="e.g. Md. Rafiqul Islam" />
+        </div>
+        <div class="form-group">
+          <label>Employee ID *</label>
+          <input class="fi" id="fEmpId" type="text" placeholder="e.g. SO-2024-001" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Role *</label>
+          <select class="fi" id="fRole">
+            <option value="">— Select —</option>
+            <option value="SO">SO (Sales Officer)</option>
+            <option value="ASE">ASE (Area Sales Executive)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select class="fi" id="fStatus">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Territory</label>
+          <input class="fi" id="fTerritory" type="text" placeholder="e.g. Dhaka North" />
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input class="fi" id="fPhone" type="text" placeholder="e.g. 01711-123456" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveMember()">Save Member</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete confirm modal -->
+<div class="overlay" id="delOverlay" onclick="bgClickDel(event)">
+  <div class="modal" style="max-width:380px;">
+    <div class="confirm-msg">
+      <span class="warn-icon">&#9888;&#65039;</span>
+      <h3>Remove Member?</h3>
+      <p id="delMsg">This will permanently remove the member from your team.</p>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="closeDelModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">Remove</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="tIcon"></span><span id="tMsg"></span></div>
+
+<script>
+/* ── Avatar colours ── */
+var AVATAR_COLORS = ['#6b4de0','#0055a4','#28a745','#e0702e','#c0392b','#16a085','#8e44ad'];
+function avatarColor(name){
+  var sum = 0;
+  for(var i=0;i<name.length;i++) sum += name.charCodeAt(i);
+  return AVATAR_COLORS[sum % AVATAR_COLORS.length];
+}
+function initials(name){
+  var parts = name.trim().split(/\s+/);
+  if(parts.length >= 2) return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+  return name.slice(0,2).toUpperCase();
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ── Storage ── */
+var SEED = [
+  { id:1, name:'Md. Rafiqul Islam',   empId:'SO-2024-001', role:'SO',  territory:'Dhaka North',   phone:'01711-123456', st:'active' },
+  { id:2, name:'Tanvir Ahmed Shuvo',  empId:'SO-2024-002', role:'SO',  territory:'Dhaka South',   phone:'01811-234567', st:'active' },
+  { id:3, name:'Sharmin Akter',       empId:'ASE-2024-001',role:'ASE', territory:'Gazipur',       phone:'01611-345678', st:'active' },
+  { id:4, name:'Nazmul Hossain Rony', empId:'SO-2024-003', role:'SO',  territory:'Narayanganj',   phone:'01911-456789', st:'active' },
+  { id:5, name:'Fariha Binte Karim',  empId:'ASE-2024-002',role:'ASE', territory:'Savar',         phone:'01511-567890', st:'inactive' }
+];
+
+function getMembers(){
+  try{
+    var v = localStorage.getItem('pjp_team_members');
+    if(v){ var arr = JSON.parse(v); if(arr.length) return arr; }
+  }catch(e){}
+  return SEED.map(function(m){ return Object.assign({},m); });
+}
+function saveMembers(arr){
+  try{ localStorage.setItem('pjp_team_members', JSON.stringify(arr)); }catch(e){}
+}
+function nextId(arr){
+  return arr.reduce(function(mx,m){ return Math.max(mx, m.id); }, 0) + 1;
+}
+
+/* ── Render ── */
+function updateStats(members){
+  document.getElementById('statTotal').textContent  = members.length;
+  document.getElementById('statActive').textContent = members.filter(function(m){ return m.st==='active'; }).length;
+  document.getElementById('statSO').textContent     = members.filter(function(m){ return m.role==='SO'; }).length;
+  document.getElementById('statASE').textContent    = members.filter(function(m){ return m.role==='ASE'; }).length;
+}
+
+function renderTable(){
+  var members = getMembers();
+  var q       = document.getElementById('searchInput').value.trim().toLowerCase();
+  var role    = document.getElementById('filterRole').value;
+  var status  = document.getElementById('filterStatus').value;
+
+  var filtered = members.filter(function(m){
+    if(role   && m.role !== role)     return false;
+    if(status && m.st   !== status)   return false;
+    if(q && m.name.toLowerCase().indexOf(q) < 0 &&
+            m.empId.toLowerCase().indexOf(q) < 0 &&
+            (m.territory||'').toLowerCase().indexOf(q) < 0) return false;
+    return true;
+  });
+
+  updateStats(members);
+
+  var tbody = document.getElementById('tblBody');
+  tbody.innerHTML = '';
+  document.getElementById('tblEmpty').style.display = filtered.length ? 'none' : '';
+  document.getElementById('membersTable').style.display = filtered.length ? '' : 'none';
+
+  filtered.forEach(function(m, idx){
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td style="color:var(--text-3);font-size:12px;">' + (idx+1) + '</td>' +
+      '<td><div class="member-cell">' +
+        '<div class="avatar" style="background:' + avatarColor(m.name) + '">' + esc(initials(m.name)) + '</div>' +
+        '<div><div class="member-name">' + esc(m.name) + '</div><div class="member-id">' + esc(m.empId) + '</div></div>' +
+      '</div></td>' +
+      '<td style="font-size:12.5px;color:var(--text-3);">' + esc(m.empId) + '</td>' +
+      '<td><span class="badge badge-' + m.role.toLowerCase() + '">' + esc(m.role) + '</span></td>' +
+      '<td>' + (m.territory ? '<span class="terr-pill">' + esc(m.territory) + '</span>' : '<span style="color:#ccc">—</span>') + '</td>' +
+      '<td style="font-size:13px;">' + (m.phone ? esc(m.phone) : '—') + '</td>' +
+      '<td><span class="badge badge-' + m.st + '">' + (m.st==='active'?'Active':'Inactive') + '</span></td>' +
+      '<td><div class="td-actions">' +
+        '<button class="btn btn-ghost btn-sm" onclick="openEditModal(' + m.id + ')">&#9998; Edit</button>' +
+        '<button class="btn btn-danger btn-sm" onclick="openDelModal(' + m.id + ')">&#215; Remove</button>' +
+      '</div></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+/* ── Add / Edit Modal ── */
+var editId = null;
+
+function openAddModal(){
+  editId = null;
+  document.getElementById('modalTitle').textContent = 'Add Team Member';
+  document.getElementById('fName').value = '';
+  document.getElementById('fEmpId').value = '';
+  document.getElementById('fRole').value = '';
+  document.getElementById('fStatus').value = 'active';
+  document.getElementById('fTerritory').value = '';
+  document.getElementById('fPhone').value = '';
+  document.getElementById('memberOverlay').classList.add('open');
+  document.getElementById('fName').focus();
+}
+
+function openEditModal(id){
+  var members = getMembers();
+  var m = members.find(function(x){ return x.id === id; });
+  if(!m) return;
+  editId = id;
+  document.getElementById('modalTitle').textContent = 'Edit Member';
+  document.getElementById('fName').value      = m.name;
+  document.getElementById('fEmpId').value     = m.empId;
+  document.getElementById('fRole').value      = m.role;
+  document.getElementById('fStatus').value    = m.st;
+  document.getElementById('fTerritory').value = m.territory || '';
+  document.getElementById('fPhone').value     = m.phone || '';
+  document.getElementById('memberOverlay').classList.add('open');
+}
+
+function closeModal(){
+  document.getElementById('memberOverlay').classList.remove('open');
+}
+function bgClick(e){ if(e.target === document.getElementById('memberOverlay')) closeModal(); }
+
+function saveMember(){
+  var name  = document.getElementById('fName').value.trim();
+  var empId = document.getElementById('fEmpId').value.trim();
+  var role  = document.getElementById('fRole').value;
+  if(!name || !empId || !role){
+    toast('Name, Employee ID and Role are required', 'error');
+    return;
+  }
+  var members = getMembers();
+  if(editId === null){
+    members.push({
+      id: nextId(members), name: name, empId: empId, role: role,
+      st: document.getElementById('fStatus').value,
+      territory: document.getElementById('fTerritory').value.trim(),
+      phone: document.getElementById('fPhone').value.trim()
+    });
+    toast('Member added successfully', 'success');
+  } else {
+    var m = members.find(function(x){ return x.id === editId; });
+    if(m){
+      m.name = name; m.empId = empId; m.role = role;
+      m.st   = document.getElementById('fStatus').value;
+      m.territory = document.getElementById('fTerritory').value.trim();
+      m.phone     = document.getElementById('fPhone').value.trim();
+    }
+    toast('Member updated', 'success');
+  }
+  saveMembers(members);
+  closeModal();
+  renderTable();
+}
+
+/* ── Delete Modal ── */
+var delTargetId = null;
+
+function openDelModal(id){
+  delTargetId = id;
+  var members = getMembers();
+  var m = members.find(function(x){ return x.id === id; });
+  document.getElementById('delMsg').textContent =
+    m ? 'Remove "' + m.name + '" from your team?' : 'This will permanently remove the member.';
+  document.getElementById('delOverlay').classList.add('open');
+}
+function closeDelModal(){
+  document.getElementById('delOverlay').classList.remove('open');
+  delTargetId = null;
+}
+function bgClickDel(e){ if(e.target === document.getElementById('delOverlay')) closeDelModal(); }
+function confirmDelete(){
+  if(delTargetId === null) return;
+  var members = getMembers().filter(function(m){ return m.id !== delTargetId; });
+  saveMembers(members);
+  closeDelModal();
+  renderTable();
+  toast('Member removed', '');
+}
+
+/* ── Keyboard ── */
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){ closeModal(); closeDelModal(); }
+});
+
+/* ── Toast ── */
+var tTimer;
+function toast(msg, type){
+  var el = document.getElementById('toast');
+  document.getElementById('tMsg').textContent = msg;
+  document.getElementById('tIcon').textContent = type==='success' ? '✔ ' : type==='error' ? '✖ ' : 'ℹ ';
+  el.className = 'toast ' + (type||'');
+  void el.offsetWidth;
+  el.classList.add('show');
+  clearTimeout(tTimer);
+  tTimer = setTimeout(function(){ el.classList.remove('show'); }, 3000);
+}
+
+/* ── Init ── */
+/* Seed localStorage on first visit */
+if(!localStorage.getItem('pjp_team_members')){
+  saveMembers(SEED.map(function(m){ return Object.assign({},m); }));
+}
+renderTable();
+</script>
+</body>
+</html>
