@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "Polar PJP Planner - Static Website",
     "scripts": {
-        "start": "serve . -p $PORT",
+        "start": "serve . -l $PORT",
         "build": "echo 'No build step required'"
     },
     "dependencies": {
