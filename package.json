@@ -1,9 +1,9 @@
 {
-    "name": "sokrio-planner",
+    "name": "polar-pjp",
     "version": "1.0.0",
-    "description": "Sokrio Task and PJP Planner - Static Website",
+    "description": "Polar PJP Planner - Static Website",
     "scripts": {
-        "start": "serve .",
+        "start": "serve . -p $PORT",
         "build": "echo 'No build step required'"
     },
     "dependencies": {
